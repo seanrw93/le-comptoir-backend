@@ -1,0 +1,15 @@
+export type PourSize = 'half' | 'pint';
+ 
+export type TapStatus = 'full' | 'low' | 'critical' | 'empty';
+ 
+export type Tap = {
+  id: number;
+  position: number;
+  capacityMl: number;
+  remainingMl: number;
+};
+ 
+export const POUR_VOLUMES: Record<PourSize, number> = {
+  half: 250,
+  pint: 500,
+};
