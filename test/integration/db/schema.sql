@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS taps (
+    id SERIAL PRIMARY KEY,
+    position INTEGER NOT NULL,
+    current_ml INTEGER NOT NULL DEFAULT 20000,
+    initial_ml INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS kegs_stock (
+    id SERIAL PRIMARY KEY,
+    current_stock INTEGER NOT NULL DEFAULT 0,
+    initial_stock INTEGER NOT NULL DEFAULT 0
+);

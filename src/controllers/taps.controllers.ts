@@ -3,10 +3,19 @@ import { POUR_VOLUMES, PourSize } from '../types/taps.types.js';
 import { getSupplyStatus } from '../utils/supplyStatus.js'
 import { pool } from '../db/db.js';
 
+export const getTaps = async (ctx: Context) => {
+    const result = await pool.query(`SELECT * FROM taps ORDER BY position`);
+    ctx.body = result.rows;
+}
+
 export const pourDrink = async (ctx: Context) => {
     const tapId = Number(ctx.params.id);
-    const { pourSize } = ctx.request.body as { pourSize: PourSize}; 
+    const { pourSize } = ctx.request.body as { pourSize: PourSize};
     const volumeMl = POUR_VOLUMES[pourSize];
+
+    if (volumeMl === undefined) {
+        ctx.throw(400, 'Invalid pourSize');
+    }
 
     const result = await pool.query(
         `
