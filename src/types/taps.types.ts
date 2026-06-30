@@ -1,7 +1,5 @@
 export type PourSize = 'half' | 'pint';
  
-export type TapStatus = 'full' | 'low' | 'critical' | 'empty';
- 
 export type Tap = {
   id: number;
   position: number;

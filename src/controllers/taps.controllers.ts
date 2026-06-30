@@ -1,5 +1,6 @@
 import { Context } from 'koa';
-import { POUR_VOLUMES, PourSize, TapStatus } from '../types/taps.types.js'
+import { POUR_VOLUMES, PourSize } from '../types/taps.types.js';
+import { getSupplyStatus } from '../utils/supplyStatus.js'
 import { pool } from '../db/db.js';
 
 export const pourDrink = async (ctx: Context) => {
@@ -10,8 +11,8 @@ export const pourDrink = async (ctx: Context) => {
     const result = await pool.query(
         `
             UPDATE taps
-            SET remaining_ml = remaining_ml - $1
-            WHERE id = $2 AND remaining_ml >= $1
+            SET current_ml = current_ml - $1
+            WHERE id = $2 AND current_ml >= $1
             RETURNING *
         `, [volumeMl, tapId]
     );
@@ -20,26 +21,41 @@ export const pourDrink = async (ctx: Context) => {
         ctx.throw(409, 'Tap not found or insufficient volume remaining');
     }
 
-    ctx.body = result.rows[0];
-    console.table(ctx.body);
+    const { current_ml, initial_ml } = result.rows[0];
+    const status = getSupplyStatus(current_ml, initial_ml);
+
+    ctx.body = { ...result.rows[0], status };
 }
 
-export const getStatus = async (ctx: Context) => {
+export const replaceKeg = async (ctx: Context) => {
     const tapId = Number(ctx.params.id);
 
-    const result = await pool.query(
-        `
-            SELECT remaining_ml, capacity_ml FROM taps WHERE id = $1
-        `, [tapId]
-    );
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
 
-    if (result.rowCount === 0) {
-        ctx.throw(409, 'Tap not found');
+        const kegResult = await client.query(
+            `UPDATE kegs_stock SET current_stock = current_stock - 1 WHERE current_stock >= 1 RETURNING *`
+        );
+        if (kegResult.rowCount === 0) {
+            ctx.throw(409, 'Out of keg stock');
+        }
+
+        const tapResult = await client.query(
+            `UPDATE taps SET current_ml = initial_ml WHERE id = $1 RETURNING *`,
+            [tapId]
+        );
+        if (tapResult.rowCount === 0) {
+            ctx.throw(404, 'Tap not found');
+        }
+
+        await client.query('COMMIT');
+        ctx.body = { keg: kegResult.rows[0], tap: tapResult.rows[0] };
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
     }
+};
 
-    const { remaining_ml, capacity_ml } = result.rows[0];
-    const ratio = remaining_ml / capacity_ml;
-    const status: TapStatus = ratio >= 0.5 ? 'full' : ratio >= 0.25 ? 'low' : remaining_ml > 0 ? 'critical' : 'empty';
-
-    ctx.body = { status };
-}
