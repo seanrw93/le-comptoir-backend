@@ -69,7 +69,7 @@ Body:
 
 `pourSize` must be `"half"` (250ml) or `"pint"` (500ml). Returns 400 for any other value.
 
-Returns 409 if the tap has insufficient volume remaining, or if the tap id does not exist.
+Returns 409 if the tap has insufficient volume remaining. Note: a non-existent tap id also returns 409 (rather than 404) because both cases produce a 0-row result from the same guarded UPDATE query.
 
 #### `POST /api/taps/:id/replace-keg`
 
@@ -81,7 +81,7 @@ No body required. Atomically decrements `kegs_stock` and resets the tap's `curre
 
 | Method | Route | Description |
 |--------|-------|-------------|
-| `GET` | `/api/kegs` | Current keg stock count and status |
+| `GET` | `/api/kegs` | Current keg stock count and status. Returns 404 if not initialised |
 | `POST` | `/api/kegs/restock` | Add to keg stock |
 
 #### `POST /api/kegs/restock`
@@ -91,7 +91,7 @@ Body:
 { "quantity": 10 }
 ```
 
-`quantity` must be a whole number between 10 and 30 (inclusive). Increments both `current_stock` and `initial_stock`.
+`quantity` must be a whole number between 10 and 30 (inclusive). Increments both `current_stock` and `initial_stock`. Returns 404 if no `kegs_stock` row exists.
 
 ---
 

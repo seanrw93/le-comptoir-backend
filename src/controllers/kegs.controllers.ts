@@ -28,7 +28,7 @@ export const restockKegs = async (ctx: Context) => {
     )
 
     if (result.rowCount === 0) {
-        ctx.throw(409, 'Keg stock not found');
+        ctx.throw(404, 'Keg stock not found');
     }
 
     const { current_stock, initial_stock } = result.rows[0];
@@ -45,7 +45,7 @@ export const getCurrentStock = async (ctx: Context) => {
     );
 
     if (result.rowCount === 0) {
-        ctx.throw(409, 'Keg stock not found');
+        ctx.throw(404, 'Keg stock not found');
     }
 
     const { current_stock, initial_stock } = result.rows[0];

@@ -29,12 +29,12 @@ describe('GET /api/kegs', () => {
         expect(res.body).toMatchObject({ current_stock: 9, initial_stock: 10, status: 'full' });
     });
 
-    it('responds 409 when no kegs_stock row exists', async () => {
+    it('responds 404 when no kegs_stock row exists', async () => {
         query.mockResolvedValueOnce({ rows: [], rowCount: 0 });
 
         const res = await request(app.callback()).get('/api/kegs');
 
-        expect(res.status).toBe(409);
+        expect(res.status).toBe(404);
     });
 });
 
@@ -127,13 +127,13 @@ describe('POST /api/kegs/restock', () => {
         expect(res.status).toBe(200);
     });
 
-    it('responds 409 when no kegs_stock row exists', async () => {
+    it('responds 404 when no kegs_stock row exists', async () => {
         query.mockResolvedValueOnce({ rows: [], rowCount: 0 });
 
         const res = await request(app.callback())
             .post('/api/kegs/restock')
             .send({ quantity: 10 });
 
-        expect(res.status).toBe(409);
+        expect(res.status).toBe(404);
     });
 });
