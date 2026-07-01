@@ -1,4 +1,4 @@
-# Le Comptoir — Beer Tap Management API
+# Le Comptoir - Beer Tap Management API
 
 > Exercice technique HEINEKEN France · Digital Studio · Stack : Koa · PostgreSQL · TypeScript
 
