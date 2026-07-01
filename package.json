@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --selectProjects unit",
-    "test:integration": "cross-env PG_URL=postgresql://comptoir_user:password123@localhost:5432/comptoir?options=-c%20search_path%3Dcomptoir_test PG_TEST_SCHEMA=comptoir_test node --experimental-vm-modules node_modules/jest/bin/jest.js --selectProjects integration",
+    "test:integration": "cross-env PG_URL=postgresql://comptoir_user:password123@localhost:5432/comptoir?options=-c%20search_path%3Dcomptoir_test PG_TEST_SCHEMA=comptoir_test node --experimental-vm-modules node_modules/jest/bin/jest.js --selectProjects integration --runInBand",
     "test:db:setup": "node test/integration/db/provision-schema.mjs"
   },
   "dependencies": {

@@ -87,10 +87,10 @@ describe('POST /api/taps/:id/replace-keg', () => {
         expect(rows[0].current_ml).toBe(20000);
     });
 
-    it('reflects the decremented keg stock via GET /api/kegs/status', async () => {
+    it('reflects the decremented keg stock via GET /api/kegs', async () => {
         await request(app.callback()).post('/api/taps/1/replace-keg');
 
-        const res = await request(kegsApp.callback()).get('/api/kegs/status');
+        const res = await request(kegsApp.callback()).get('/api/kegs');
 
         expect(res.status).toBe(200);
         expect(res.body.current_stock).toBe(SEED_KEG_STOCK.current_stock - 1);
