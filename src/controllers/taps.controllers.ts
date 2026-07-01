@@ -14,7 +14,7 @@ export const pourDrink = async (ctx: Context) => {
     const volumeMl = POUR_VOLUMES[pourSize];
 
     if (volumeMl === undefined) {
-        ctx.throw(400, 'Invalid pourSize');
+        ctx.throw(400, 'Pour size not recognised');
     }
 
     const result = await pool.query(
@@ -44,16 +44,25 @@ export const replaceKeg = async (ctx: Context) => {
         await client.query('BEGIN');
 
         const kegResult = await client.query(
-            `UPDATE kegs_stock SET current_stock = current_stock - 1 WHERE current_stock >= 1 RETURNING *`
+            `
+                UPDATE kegs_stock SET current_stock = current_stock - 1
+                WHERE current_stock >= 1 
+                RETURNING *
+            `
         );
+
         if (kegResult.rowCount === 0) {
             ctx.throw(409, 'Out of keg stock');
         }
 
         const tapResult = await client.query(
-            `UPDATE taps SET current_ml = initial_ml WHERE id = $1 RETURNING *`,
-            [tapId]
+            `
+                UPDATE taps SET current_ml = initial_ml 
+                WHERE id = $1 
+                RETURNING *
+            `, [tapId]
         );
+
         if (tapResult.rowCount === 0) {
             ctx.throw(404, 'Tap not found');
         }
