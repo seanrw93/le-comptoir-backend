@@ -5,7 +5,10 @@ import { pool } from '../db/db.js';
 
 export const getTaps = async (ctx: Context) => {
     const result = await pool.query(`SELECT * FROM taps ORDER BY position`);
-    ctx.body = result.rows;
+    ctx.body = result.rows.map((tap) => ({
+        ...tap,
+        status: getSupplyStatus(tap.current_ml, tap.initial_ml),
+    }));
 }
 
 export const pourDrink = async (ctx: Context) => {

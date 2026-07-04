@@ -31,7 +31,7 @@ describe('GET /api/taps', () => {
         const res = await request(app.callback()).get('/api/taps');
 
         expect(res.status).toBe(200);
-        expect(res.body).toEqual(taps);
+        expect(res.body).toEqual(taps.map((tap) => ({ ...tap, status: 'full' })));
         expect(query).toHaveBeenCalledWith(expect.stringContaining('FROM taps'));
     });
 });
