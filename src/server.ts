@@ -4,6 +4,7 @@ import bodyParser from 'koa-bodyparser';
 import dotenv from 'dotenv';
 import { tapsRouter } from './routes/taps.routes.js';
 import { kegsRouter } from './routes/kegs.routes.js';
+import { healthRouter } from './routes/health.routes.js';
 
 dotenv.config();
 
@@ -21,6 +22,9 @@ app.use(async (ctx, next) => {
         ctx.body = { error: err.message ?? 'Internal server error' };
     }
 });
+
+app.use(healthRouter.routes());
+app.use(healthRouter.allowedMethods());
 
 app.use(tapsRouter.routes());
 app.use(tapsRouter.allowedMethods());
