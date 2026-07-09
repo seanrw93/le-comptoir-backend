@@ -6,6 +6,8 @@ Backend API for a bar tap management system. Tracks beer volume across 4 taps, h
 
 Built with Koa, TypeScript, and PostgreSQL.
 
+Frontend : [le-comptoir-frontend](https://github.com/seanrw93/le-comptoir-frontend)
+
 ---
 
 ## Prerequisites
