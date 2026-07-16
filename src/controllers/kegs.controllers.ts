@@ -22,7 +22,7 @@ export const restockKegs = async (ctx: Context) => {
 
     const result = await pool.query(
         `
-            UPDATE kegs_stock SET initial_stock = current_stock + $1, current_stock = current_stock + $1
+            UPDATE kegs_stock SET initial_stock = initial_stock + $1, current_stock = current_stock + $1
             RETURNING *
         `, [quantity]
     )
