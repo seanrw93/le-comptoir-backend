@@ -12,7 +12,11 @@ export const buildApp = (router: Router) => {
             await next();
         } catch (err: any) {
             ctx.status = err.status ?? 500;
-            ctx.body = { error: err.message ?? 'Internal server error' };
+            if (err.status) {
+                ctx.body = { error: err.message };
+            } else {
+                ctx.body = { error: 'An unexpected error occurred' };
+            }
         }
     });
 

@@ -19,7 +19,12 @@ app.use(async (ctx, next) => {
         await next();
     } catch (err: any) {
         ctx.status = err.status ?? 500;
-        ctx.body = { error: err.message ?? 'Internal server error' };
+        if (err.status) {
+            ctx.body = { error: err.message };
+        } else {
+            console.error(err);
+            ctx.body = { error: 'An unexpected error occurred' };
+        }
     }
 });
 

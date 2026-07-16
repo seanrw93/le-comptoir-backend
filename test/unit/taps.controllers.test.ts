@@ -34,6 +34,15 @@ describe('GET /api/taps', () => {
         expect(res.body).toEqual(taps.map((tap) => ({ ...tap, status: 'full' })));
         expect(query).toHaveBeenCalledWith(expect.stringContaining('FROM taps'));
     });
+
+    it('responds 500 with a generic message when the db query fails unexpectedly', async () => {
+        query.mockRejectedValueOnce(new Error('connection terminated unexpectedly'));
+
+        const res = await request(app.callback()).get('/api/taps');
+
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({ error: 'An unexpected error occurred' });
+    });
 });
 
 describe('POST /api/taps/:id/pour', () => {
