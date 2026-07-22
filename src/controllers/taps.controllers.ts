@@ -55,7 +55,7 @@ export const replaceKeg = async (ctx: Context) => {
         );
 
         if (kegResult.rowCount === 0) {
-            ctx.throw(409, 'Out of keg stock');
+            ctx.throw(422, 'Out of keg stock');
         }
 
         const tapResult = await client.query(
