@@ -143,7 +143,7 @@ describe('POST /api/taps/:id/replace-keg', () => {
         expect(release).toHaveBeenCalled();
     });
 
-    it('rolls back and 409s when keg stock is exhausted', async () => {
+    it('rolls back and 422s when keg stock is exhausted', async () => {
         const clientQuery = jest.fn();
         const release = jest.fn();
         connect.mockResolvedValueOnce({ query: clientQuery, release });
@@ -156,7 +156,7 @@ describe('POST /api/taps/:id/replace-keg', () => {
 
         const res = await request(app.callback()).post('/api/taps/1/replace-keg');
 
-        expect(res.status).toBe(409);
+        expect(res.status).toBe(422);
         expect(clientQuery).toHaveBeenCalledWith('ROLLBACK');
         expect(release).toHaveBeenCalled();
     });

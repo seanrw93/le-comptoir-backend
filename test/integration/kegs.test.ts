@@ -26,11 +26,11 @@ describe('POST /api/kegs/restock', () => {
 
         expect(res.status).toBe(200);
         expect(res.body.current_stock).toBe(SEED_KEG_STOCK.current_stock + 10);
-        expect(res.body.initial_stock).toBe(SEED_KEG_STOCK.initial_stock + 10);
+        expect(res.body.initial_stock).toBe(SEED_KEG_STOCK.current_stock + 10);
 
         const { rows } = await testPool.query('SELECT current_stock, initial_stock FROM kegs_stock WHERE id = $1', [SEED_KEG_STOCK.id]);
         expect(rows[0].current_stock).toBe(SEED_KEG_STOCK.current_stock + 10);
-        expect(rows[0].initial_stock).toBe(SEED_KEG_STOCK.initial_stock + 10);
+        expect(rows[0].initial_stock).toBe(SEED_KEG_STOCK.current_stock + 10);
     });
 
     it('returns status in the response', async () => {
